@@ -173,7 +173,6 @@ void DataSiameseLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
   top[2]->ReshapeLike(label);
   // Copy the labels.
   caffe_copy(label.count(), label.cpu_data(), top[2]->mutable_cpu_data());
-printf("%d, %d, %d\n", data.count(), data_p.count(), label.count());
 }
 
 INSTANTIATE_CLASS(DataSiameseLayer);
