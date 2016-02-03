@@ -16,8 +16,8 @@ inline void MDB_CHECK(int mdb_status) {
 
 class LMDBCursor : public Cursor {
  public:
-  explicit LMDBCursor(MDB_txn* mdb_txn, MDB_cursor* mdb_cursor)
-    : mdb_txn_(mdb_txn), mdb_cursor_(mdb_cursor), valid_(false) {
+  explicit LMDBCursor(MDB_txn* mdb_txn, MDB_cursor* mdb_cursor, size_t ms_entries)
+    : mdb_txn_(mdb_txn), mdb_cursor_(mdb_cursor), valid_(false), num_entries_(ms_entries) {
     SeekToFirst();
   }
   virtual ~LMDBCursor() {
@@ -34,6 +34,7 @@ class LMDBCursor : public Cursor {
         mdb_value_.mv_size);
   }
   virtual bool valid() { return valid_; }
+  virtual size_t num_entries() { return num_entries_; }
 
  private:
   void Seek(MDB_cursor_op op) {
@@ -50,6 +51,7 @@ class LMDBCursor : public Cursor {
   MDB_cursor* mdb_cursor_;
   MDB_val mdb_key_, mdb_value_;
   bool valid_;
+  size_t num_entries_;
 };
 
 class LMDBTransaction : public Transaction {
@@ -57,6 +59,7 @@ class LMDBTransaction : public Transaction {
   explicit LMDBTransaction(MDB_dbi* mdb_dbi, MDB_txn* mdb_txn)
     : mdb_dbi_(mdb_dbi), mdb_txn_(mdb_txn) { }
   virtual void Put(const string& key, const string& value);
+  virtual void Get(const string& key, string& value);
   virtual void Commit() { MDB_CHECK(mdb_txn_commit(mdb_txn_)); }
 
  private:

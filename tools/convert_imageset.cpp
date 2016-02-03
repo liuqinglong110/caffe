@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
       }
     }
     // sequential
-    string key_str = caffe::format_int(line_id, 8) + "_" + lines[line_id].first;
+    string key_str = caffe::format_int(line_id, 8);
 
     // Put in db
     string out;

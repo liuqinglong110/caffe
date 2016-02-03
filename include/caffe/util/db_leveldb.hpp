@@ -21,6 +21,7 @@ class LevelDBCursor : public Cursor {
   virtual string key() { return iter_->key().ToString(); }
   virtual string value() { return iter_->value().ToString(); }
   virtual bool valid() { return iter_->Valid(); }
+  virtual size_t num_entries() { return 0; }
 
  private:
   leveldb::Iterator* iter_;
@@ -32,6 +33,7 @@ class LevelDBTransaction : public Transaction {
   virtual void Put(const string& key, const string& value) {
     batch_.Put(key, value);
   }
+  virtual void Get(const string& key, string& value) {}
   virtual void Commit() {
     leveldb::Status status = db_->Write(leveldb::WriteOptions(), &batch_);
     CHECK(status.ok()) << "Failed to write batch to leveldb "

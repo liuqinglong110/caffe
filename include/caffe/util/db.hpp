@@ -19,6 +19,7 @@ class Cursor {
   virtual string key() = 0;
   virtual string value() = 0;
   virtual bool valid() = 0;
+  virtual size_t num_entries() = 0;
 
   DISABLE_COPY_AND_ASSIGN(Cursor);
 };
@@ -28,6 +29,7 @@ class Transaction {
   Transaction() { }
   virtual ~Transaction() { }
   virtual void Put(const string& key, const string& value) = 0;
+  virtual void Get(const string& key, string& value) = 0;
   virtual void Commit() = 0;
 
   DISABLE_COPY_AND_ASSIGN(Transaction);
