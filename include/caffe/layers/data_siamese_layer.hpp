@@ -42,7 +42,7 @@ class DataSiameseLayer : public BaseDataLayer<Dtype> {
 
   // class labels
   std::vector<int> labels_;
-  std::vector<std::vector<int>> label_index_set_;
+  std::vector<std::vector<int> > label_index_set_;
   
 };
 

@@ -80,6 +80,10 @@ cv::Mat ReadImageToCVMat(const string& filename,
     LOG(ERROR) << "Could not open or find file " << filename;
     return cv_img_origin;
   }
+  if (is_color)
+  {
+    CV_Assert(cv_img_origin.channels() == 3);
+  }
   if (height > 0 && width > 0) {
     cv::resize(cv_img_origin, cv_img, cv::Size(width, height));
   } else {
