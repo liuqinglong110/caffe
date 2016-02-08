@@ -393,6 +393,7 @@ message LayerParameter {
   optional TanHParameter tanh_param = 127;
   optional ThresholdParameter threshold_param = 128;
   optional TileParameter tile_param = 138;
+  optional TripletLossParameter triplet_loss_param = 143;
   optional WindowDataParameter window_data_param = 129;
 }
 
@@ -1087,6 +1088,12 @@ message TileParameter {
 // Message that stores parameters used by ThresholdLayer
 message ThresholdParameter {
   optional float threshold = 1 [default = 0]; // Strictly positive values
+}
+
+// Message that stores parameters used by TripletLossLayer
+message TripletLossParameter {
+  // scalar that does in front of the margin scaling term
+  optional float margin = 1 [default = 1.0];
 }
 
 message WindowDataParameter {
