@@ -45,6 +45,87 @@ class ConstantFiller : public Filler<Dtype> {
   }
 };
 
+/// @brief Fills a Blob with constant values @f$ x = 0 @f$.
+template <typename Dtype>
+class BGR2GrayFiller : public Filler<Dtype> {
+ public:
+  explicit BGR2GrayFiller(const FillerParameter& param)
+      : Filler<Dtype>(param) {}
+  virtual void Fill(Blob<Dtype>* blob) {
+    Dtype* data = blob->mutable_cpu_data();
+    const int count = blob->count();
+    // const Dtype value = this->filler_param_.value();
+    CHECK(count);
+    // for (int i = 0; i < count; ++i) {
+    //   data[i] = value;
+    // }
+    CHECK_EQ(blob->num(), 1)
+         << "Wrong n!";
+    CHECK_EQ(blob->channels(), 3)
+         << "Wrong c!";
+    CHECK_EQ(blob->height(), 1)
+         << "Wrong h!";
+    CHECK_EQ(blob->width(), 1)
+         << "Wrong w!";
+
+    data[blob->offset(0, 0, 0, 0)] = 0.1140; //B
+    data[blob->offset(0, 1, 0, 0)] = 0.5870; //G
+    data[blob->offset(0, 2, 0, 0)] = 0.2989; //R
+
+    CHECK_EQ(this->filler_param_.sparse(), -1)
+         << "Sparsity not supported by this Filler.";
+  }
+};
+
+/// @brief A Sobel weights to calculate gradient.
+template <typename Dtype>
+class SobelFiller : public Filler<Dtype> {
+ public:
+  explicit SobelFiller(const FillerParameter& param)
+      : Filler<Dtype>(param) {}
+  virtual void Fill(Blob<Dtype>* blob) {
+    Dtype* data = blob->mutable_cpu_data();
+    const int count = blob->count();
+    // const Dtype value = this->filler_param_.value();
+    CHECK(count);
+    // for (int i = 0; i < count; ++i) {
+    //   data[i] = value;
+    // }
+    CHECK_EQ(blob->num(), 2)
+         << "Wrong n!";
+    CHECK_EQ(blob->channels(), 1)
+         << "Wrong c!";
+    CHECK_EQ(blob->height(), 3)
+         << "Wrong h!";
+    CHECK_EQ(blob->width(), 3)
+         << "Wrong w!";
+
+    data[blob->offset(0, 0, 0, 0)] = -1;
+    data[blob->offset(0, 0, 0, 1)] = -2;
+    data[blob->offset(0, 0, 0, 2)] = -1;
+    data[blob->offset(0, 0, 1, 0)] = 0;
+    data[blob->offset(0, 0, 1, 1)] = 0;
+    data[blob->offset(0, 0, 1, 2)] = 0;
+    data[blob->offset(0, 0, 2, 0)] = 1;
+    data[blob->offset(0, 0, 2, 1)] = 2;
+    data[blob->offset(0, 0, 2, 2)] = 1;
+    data[blob->offset(1, 0, 0, 0)] = -1;
+    data[blob->offset(1, 0, 0, 1)] = 0;
+    data[blob->offset(1, 0, 0, 2)] = 1;
+    data[blob->offset(1, 0, 1, 0)] = -2;
+    data[blob->offset(1, 0, 1, 1)] = 0;
+    data[blob->offset(1, 0, 1, 2)] = 2;
+    data[blob->offset(1, 0, 2, 0)] = -1;
+    data[blob->offset(1, 0, 2, 1)] = 0;
+    data[blob->offset(1, 0, 2, 2)] = 1;
+
+    CHECK_EQ(this->filler_param_.sparse(), -1)
+         << "Sparsity not supported by this Filler.";
+  }
+};
+
+
+
 /// @brief Fills a Blob with uniformly distributed values @f$ x\sim U(a, b) @f$.
 template <typename Dtype>
 class UniformFiller : public Filler<Dtype> {
@@ -284,6 +365,10 @@ Filler<Dtype>* GetFiller(const FillerParameter& param) {
     return new MSRAFiller<Dtype>(param);
   } else if (type == "bilinear") {
     return new BilinearFiller<Dtype>(param);
+  } else if (type == "sobel") {
+    return new SobelFiller<Dtype>(param);
+  } else if (type == "bgr2gray") {
+    return new BGR2GrayFiller<Dtype>(param);
   } else {
     CHECK(false) << "Unknown filler name: " << param.type();
   }
